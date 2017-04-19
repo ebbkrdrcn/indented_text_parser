@@ -21,7 +21,7 @@ class IndentedTextParser(object):
             self.__children.append(child)
 
     def __init__(self):
-        self.__indent = 4
+        self.__indent = 2
 
     def parse(self, input):
         if not isinstance(input, str):
@@ -38,9 +38,20 @@ class IndentedTextParser(object):
             d = self.__get_depth(l)
             if d == depth:
                 lines.pop(0)
+                if not l:
+                    continue
+
                 child = self.__class__.Node(l.strip())
                 parent.append_child(child)
                 if len(lines) > 0:
+                    while 1:
+                        if not len(lines):
+                            return
+                        elif lines[0]:
+                            break
+
+                        lines.pop(0)
+
                     d1 = self.__get_depth(lines[0])
                     if d1 > d:
                         self.__parse(lines, parent=child, depth=d1)
@@ -75,7 +86,7 @@ class IndentedTextParser(object):
         self.__indent = self.__detect_indent(input)
         for line in input.splitlines():
             l = self.__get_indent(line)
-            if l > 0:
+            if l > 0 and self.__indent > 0:
                 if l % self.__indent > 0:
                     c = (self.__indent * ceil(l / self.__indent)) or self.__indent
                     spaces = ''
