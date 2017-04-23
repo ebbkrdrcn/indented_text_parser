@@ -108,5 +108,8 @@ class IndentedTextParser(object):
         return 0
 
     def __get_depth(self, line):
-        sc = self.__get_indent(line)
-        return (sc / self.__indent) + 1
+        indent = self.__get_indent(line)
+        if not indent:
+            return 0
+
+        return (indent / self.__indent) + 1
